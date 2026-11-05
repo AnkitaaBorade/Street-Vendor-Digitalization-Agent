@@ -229,8 +229,6 @@ def call_granite(prompt: str, max_tokens: int = None, temperature: float = None)
         "parameters": {
             "decoding_method": "greedy",
             "max_new_tokens": max_tokens or config.GRANITE_MAX_TOKENS,
-            "temperature": temperature or config.GRANITE_TEMPERATURE,
-            "top_p": config.GRANITE_TOP_P,
             "repetition_penalty": 1.1,
         },
     }

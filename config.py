@@ -14,7 +14,7 @@ load_dotenv()
 
 class Config:
     # IBM Watson / Granite credentials
-    IBM_API_KEY: str = os.getenv("IBM_API_KEY", "xPxJX77gVUmT4ljW2L-VR2p4P7C5tuRteJMSx6cxwMBG")
+    IBM_API_KEY: str = os.getenv("IBM_API_KEY", "4qzPm9aBnd2z-us5weFv4Tl1TcMo57IUMFVK6Tyyw6vA")
     IBM_PROJECT_ID: str = os.getenv("IBM_PROJECT_ID", "6db5aee4-e18c-413a-a036-2a7bec1564b2")
     IBM_WATSONX_URL: str = os.getenv(
         "IBM_WATSONX_URL", "https://us-south.ml.cloud.ibm.com"
