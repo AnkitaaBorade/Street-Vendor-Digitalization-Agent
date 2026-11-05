@@ -214,7 +214,7 @@ def call_granite(prompt: str, max_tokens: int = None, temperature: float = None)
     Raises requests.HTTPError on API failures.
     """
     token = _get_iam_token()
-    url = f"{config.IBM_WATSONX_URL}/ml/v1/text/generation?version=2023-05-29"
+    url = f"{config.IBM_WATSONX_URL}/ml/v1/text/generation?version=2024-03-19"
 
     headers = {
         "Authorization": f"Bearer {token}",
