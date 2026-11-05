@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Street Vendor Digitalization Agent — IBM Granite AI</title>
+  <style>
+    /* =====================================================================
+       DESIGN SYSTEM
+       Base: #ffffff | Surface: #f7f8fa | Border: #e5e7eb
+       Text: #1f2328 | Muted: #57606a | Accent: #b45309 (copper-amber)
+       AI Panel accent: #0f5c5c (deep forest teal)
+    ===================================================================== */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #ffffff;
+      --surface:      #f7f8fa;
+      --surface-2:    #f0f2f5;
+      --border:       #e5e7eb;
+      --border-strong:#d1d5db;
+      --text:         #1f2328;
+      --muted:        #57606a;
+      --muted-light:  #8b949e;
+      --accent:       #b45309;
+      --accent-dark:  #92400e;
+      --accent-light: #fef3c7;
+      --accent-border:#fcd34d;
+      --teal:         #0f5c5c;
+      --teal-dark:    #0a4040;
+      --teal-light:   #e6f4f4;
+      --teal-border:  #99d6d6;
+      --teal-mid:     #1a7a7a;
+      --success:      #166534;
+      --success-bg:   #f0fdf4;
+      --success-border:#bbf7d0;
+      --warn:         #92400e;
+      --warn-bg:      #fffbeb;
+      --warn-border:  #fcd34d;
+      --danger:       #991b1b;
+      --danger-bg:    #fef2f2;
+      --danger-border:#fecaca;
+      --radius-sm:    4px;
+      --radius:       6px;
+      --radius-lg:    10px;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,.07);
+      --shadow:       0 2px 8px rgba(0,0,0,.09);
+      --shadow-lg:    0 4px 20px rgba(0,0,0,.11);
+      --font:         -apple-system, "Segoe UI", system-ui, sans-serif;
+      --mono:         ui-monospace, "Cascadia Code", "Fira Mono", monospace;
+      --nav-h:        56px;
+      --max-w:        1100px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* =====================================================================
+       SCROLLBAR
+    ===================================================================== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+    /* =====================================================================
+       UTILITIES
+    ===================================================================== */
+    .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+    .hidden { display: none !important; }
+
+    /* =====================================================================
+       TOP NAVIGATION BAR
+    ===================================================================== */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      margin-right: auto;
+    }
+
+    .nav-brand-badge {
+      background: var(--teal);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+    }
+
+    .nav-brand-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      display: block;
+      padding: 6px 13px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      transition: color .15s, background .15s, border-color .15s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--teal);
+      background: var(--teal-light);
+      border-color: var(--teal-border);
+    }
+
+    /* =====================================================================
+       PAGE BODY OFFSET
+    ===================================================================== */
+    main { padding-top: var(--nav-h); }
+
+    /* =====================================================================
+       SECTION COMMON
+    ===================================================================== */
+    .section { padding: 64px 0; }
+    .section-alt { background: var(--surface); }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -.02em;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* =====================================================================
+       HERO / OVERVIEW SECTION
+    ===================================================================== */
+    #overview {
+      /* Full-section layered background:
+         1. Base white
+         2. Soft teal wash top-right corner
+         3. Soft amber wash bottom-left corner
+         4. Very faint centre glow to tie both halves together          */
+      background:
+        radial-gradient(ellipse 55% 70% at 92% 10%,  rgba(15,92,92,.07)  0%, transparent 100%),
+        radial-gradient(ellipse 40% 50% at 70% 90%,  rgba(180,83,9,.05)  0%, transparent 100%),
+        radial-gradient(ellipse 60% 60% at 50% 50%,  rgba(15,92,92,.03)  0%, transparent 100%),
+        radial-gradient(ellipse 35% 45% at 8%  15%,  rgba(15,92,92,.04)  0%, transparent 100%),
+        #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 72px 0 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-geo {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      max-width: 680px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -.03em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero-title span { color: var(--teal); }
+
+    .hero-desc {
+      font-size: 15.5px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 28px;
+      max-width: 520px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 20px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+      font-family: var(--font);
+    }
+
+    .btn-primary {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      border-color: var(--teal-dark);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+    .btn-secondary:hover {
+      background: var(--surface-2);
+      border-color: var(--border-strong);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn-accent:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--teal);
+      border-color: var(--teal-border);
+    }
+    .btn-ghost:hover {
+      background: var(--teal-light);
+    }
+
+    .btn-sm { padding: 6px 13px; font-size: 12.5px; }
+
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Feature chips row */
+    .feature-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .chip-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+    }
+
+    /* =====================================================================
+       IBM GRANITE AI HUB SECTION
+    ===================================================================== */
+    #ai-hub {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+
+    .ai-hub-header {
+      background: var(--teal-light);
+      border-bottom: 1px solid var(--teal-border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ai-hub-badge {
+      background: var(--teal);
+      border: 1px solid var(--teal-dark);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: var(--radius-sm);
+    }
+
+    .ai-hub-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--teal-dark);
+      letter-spacing: -.01em;
+    }
+
+    .ai-hub-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .ai-hub-body {
+      padding: 40px 24px 48px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    .ai-hub-intro {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .ai-hub-intro-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 10px;
+    }
+
+    .ai-hub-intro-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -.025em;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .ai-hub-intro-desc {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Form card */
+    .form-card {
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .form-card-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-card-header-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .form-card-header-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 2px rgba(34,197,94,.25);
+    }
+
+    .form-card-body { padding: 28px 24px; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: .01em;
+    }
+
+    label .req { color: var(--danger); margin-left: 2px; }
+
+    .form-hint {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: -2px;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 13.5px;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(15,92,92,.12);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2357606a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+    }
+
+    .lang-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .lang-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+      font-family: var(--font);
+    }
+
+    .lang-btn.active {
+      border-color: var(--teal);
+      background: var(--teal-light);
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    .lang-btn:hover:not(.active) {
+      background: var(--surface);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .form-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 24px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .form-footer-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* =====================================================================
+       LOADING STATE
+    ===================================================================== */
+    .loader-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 48px 24px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--teal-light);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loader-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .loader-sub {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .progress-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      max-width: 320px;
+      text-align: left;
+      margin-top: 8px;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .progress-step.done { color: var(--success); }
+    .progress-step.active { color: var(--teal); font-weight: 600; }
+
+    .step-icon {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    .step-icon.done-icon {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    /* =====================================================================
+       OUTPUT SECTION
+    ===================================================================== */
+    #output-section {
+      background: var(--surface);
+      padding: 48px 0;
+    }
+
+    .output-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* AI text output */
+    .output-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .output-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .output-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .output-card-meta {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .teal-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+    }
+
+    .output-body {
+      padding: 24px 28px;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Parsed markdown headings */
+    .output-body h1, .output-body h2, .output-body h3 {
+      font-weight: 700;
+      color: var(--text);
+      margin: 22px 0 8px;
+    }
+    .output-body h2 {
+      font-size: 15.5px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .output-body h3 { font-size: 14px; color: var(--teal); }
+    .output-body ul, .output-body ol {
+      padding-left: 22px;
+      margin: 8px 0;
+    }
+    .output-body li { margin-bottom: 4px; }
+    .output-body strong { font-weight: 700; }
+    .output-body p { margin-bottom: 10px; }
+
+    /* Sidebar cards */
+    .sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Business card */
+    .biz-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .biz-card-accent {
+      height: 6px;
+      background: linear-gradient(90deg, var(--teal) 0%, var(--teal-mid) 100%);
+    }
+
+    .biz-card-body { padding: 20px; }
+
+    .biz-card-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+      letter-spacing: -.01em;
+    }
+
+    .biz-card-category {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 12px;
+    }
+
+    .biz-card-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .qr-placeholder {
+      width: 80px; height: 80px;
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      width: 40px;
+    }
+
+    .qr-cell {
+      width: 8px; height: 8px;
+      background: var(--text);
+      border-radius: 1px;
+    }
+
+    .qr-cell.empty { background: transparent; }
+
+    .qr-label {
+      font-size: 10px;
+      color: var(--muted-light);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .biz-card-upi {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      margin-bottom: 14px;
+      font-family: var(--mono);
+    }
+
+    .upi-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--accent);
+      font-family: var(--font);
+    }
+
+    .biz-listing-links {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .listing-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--teal);
+      text-decoration: none;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .listing-link:last-child { border-bottom: none; }
+    .listing-link:hover { color: var(--teal-dark); }
+    .listing-link-arrow { color: var(--muted-light); font-size: 11px; }
+
+    /* Export button */
+    .export-card {
+      background: var(--accent-light);
+      border: 1px solid var(--accent-border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+    }
+
+    .export-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-dark);
+      margin-bottom: 6px;
+    }
+
+    .export-card-desc {
+      font-size: 12px;
+      color: var(--warn);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    /* =====================================================================
+       RAG CITATION PANEL
+    ===================================================================== */
+    .citation-panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .citation-header {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 11px 18px;
+      background: var(--teal-light);
+      border-bottom: 1px solid var(--teal-border);
+    }
+
+    .citation-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    .citation-count {
+      background: var(--teal);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-left: auto;
+    }
+
+    .citation-list { padding: 4px 0; }
+
+    .citation-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    .citation-item:last-child { border-bottom: none; }
+    .citation-item:hover { background: var(--surface); }
+
+    .citation-num {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      border: 1px solid var(--teal-border);
+      color: var(--teal);
+      font-size: 10px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .citation-info { flex: 1; min-width: 0; }
+
+    .citation-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .citation-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 5px;
+    }
+
+    .citation-url {
+      font-size: 11px;
+      color: var(--teal);
+      text-decoration: none;
+      font-family: var(--mono);
+      word-break: break-all;
+    }
+    .citation-url:hover { text-decoration: underline; }
+
+    /* =====================================================================
+       SCHEMES SECTION
+    ===================================================================== */
+    #schemes {
+      background: var(--bg);
+      padding: 64px 0;
+    }
+
+    .schemes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 36px;
+    }
+
+    .scheme-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      transition: box-shadow .15s, border-color .15s;
+    }
+
+    .scheme-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--border-strong);
+    }
+
+    .scheme-card.eligible {
+      border-left: 4px solid var(--success);
+      background: var(--success-bg);
+    }
+
+    .scheme-card.not-eligible {
+      border-left: 4px solid var(--border-strong);
+    }
+
+    .scheme-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .scheme-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .badge-eligible {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+    }
+
+    .badge-check {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: var(--warn);
+    }
+
+    .scheme-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .scheme-amount {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--teal);
+    }
+
+    .scheme-reason {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .scheme-docs-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted-light);
+      margin-bottom: 7px;
+    }
+
+    .scheme-docs-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .scheme-docs-list li {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .scheme-docs-list li::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--border-strong);
+      flex-shrink: 0;
+    }
+
+    .scheme-note {
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    .scheme-portal-link {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .scheme-portal-link:hover { text-decoration: underline; }
+
+    /* Scheme query sub-section */
+    .scheme-query-wrap {
+      margin-top: 40px;
+      background: var(--teal-light);
+      border: 1px solid var(--teal-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .scheme-query-header {
+      padding: 14px 20px;
+      background: var(--teal-light);
+      border-bottom: 1px solid var(--teal-border);
+    }
+
+    .scheme-query-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--teal);
+    }
+
+    .scheme-query-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .scheme-query-body {
+      padding: 20px;
+      background: var(--bg);
+    }
+
+    .scheme-query-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .scheme-query-result {
+      margin-top: 18px;
+      padding: 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 13.5px;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+
+    /* =====================================================================
+       ERROR / NOTICE BANNERS
+    ===================================================================== */
+    .alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      border: 1px solid;
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin: 16px 0;
+    }
+
+    .alert-error {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: var(--danger);
+    }
+
+    .alert-warn {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+      color: var(--warn);
+    }
+
+    .alert-info {
+      background: var(--teal-light);
+      border-color: var(--teal-border);
+      color: var(--teal);
+    }
+
+    .alert-icon {
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* =====================================================================
+       FOOTER
+    ===================================================================== */
+    #footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-brand {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 12.5px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--teal); }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--muted-light);
+    }
+
+    /* =====================================================================
+       RESPONSIVE
+    ===================================================================== */
+    @media (max-width: 900px) {
+      .output-grid { grid-template-columns: 1fr; }
+      .schemes-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero-title { font-size: 26px; }
+      .ai-hub-intro-title { font-size: 22px; }
+      .section-title { font-size: 22px; }
+    }
+
+    /* =====================================================================
+       ANIMATIONS
+    ===================================================================== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in { animation: fadeIn .35s ease forwards; }
+
+    /* =====================================================================
+       DIVIDER
+    ===================================================================== */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 28px 0;
+    }
+
+    /* IBM model pill */
+    .model-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--teal-light);
+      border: 1px solid var(--teal-border);
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: .03em;
+    }
+
+    .model-pill-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     TOP NAVIGATION BAR
+============================================================ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#overview">
+      <span class="nav-brand-badge">IBM Granite</span>
+      <span class="nav-brand-text">Street Vendor Digitalization Agent</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#overview" class="active" data-section="overview">Overview</a></li>
+      <li><a href="#ai-hub" data-section="ai-hub">IBM Granite AI Hub</a></li>
+      <li><a href="#vendor-registration" data-section="vendor-registration">Vendor Profile Registration</a></li>
+      <li><a href="#schemes" data-section="schemes">Export Tools</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============================================================
+     HERO / OVERVIEW SECTION
+============================================================ -->
+<section id="overview" class="section">
+  <!-- Decorative SVG geometry spanning the full section width -->
+  <svg class="hero-geo" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <!-- Fine grid covering entire hero -->
+      <pattern id="hero-grid" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+        <path d="M48 0H0V48" fill="none" stroke="rgba(15,92,92,.048)" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#hero-grid)"/>
+
+    <!-- Top-right cluster -->
+    <circle cx="88%" cy="16%" r="110" fill="none" stroke="rgba(15,92,92,.09)"  stroke-width="1.5"/>
+    <circle cx="88%" cy="16%" r="70"  fill="none" stroke="rgba(15,92,92,.06)"  stroke-width="1"/>
+    <circle cx="88%" cy="16%" r="35"  fill="none" stroke="rgba(15,92,92,.04)"  stroke-width="1"/>
+
+    <!-- Centre-right decorative ring -->
+    <circle cx="72%" cy="55%" r="80"  fill="none" stroke="rgba(180,83,9,.06)"  stroke-width="1.2"/>
+    <circle cx="72%" cy="55%" r="45"  fill="none" stroke="rgba(180,83,9,.04)"  stroke-width="1"/>
+
+    <!-- Bottom-left cluster -->
+    <circle cx="6%"  cy="88%" r="85"  fill="none" stroke="rgba(180,83,9,.07)"  stroke-width="1.2"/>
+    <circle cx="6%"  cy="88%" r="48"  fill="none" stroke="rgba(15,92,92,.04)"  stroke-width="1"/>
+
+    <!-- Top-left small ring -->
+    <circle cx="14%" cy="12%" r="50"  fill="none" stroke="rgba(15,92,92,.05)"  stroke-width="1"/>
+
+    <!-- Diagonal accent lines spanning full width -->
+    <line x1="0"   y1="100%" x2="35%"  y2="0"    stroke="rgba(15,92,92,.06)"  stroke-width="1"/>
+    <line x1="60%" y1="0"    x2="100%" y2="55%"   stroke="rgba(15,92,92,.07)"  stroke-width="1.5"/>
+    <line x1="70%" y1="0"    x2="100%" y2="40%"   stroke="rgba(180,83,9,.05)"  stroke-width="1"/>
+    <line x1="100%" y1="100%" x2="55%" y2="0"     stroke="rgba(180,83,9,.04)"  stroke-width="1"/>
+  </svg>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <h1 class="hero-title">
+          Digitalize Every<br><span>Street Vendor.</span><br>Unlock Hyperlocal Growth.
+        </h1>
+        <p class="hero-desc">
+          An AI-powered digitalization agent for India's informal economy —
+          helping hawkers, food cart operators, and micro-entrepreneurs build a
+          digital presence, access government credit schemes, and grow visibility
+          in their local markets using IBM Granite models and RAG.
+        </p>
+        <div class="hero-actions">
+          <a href="#ai-hub" class="btn btn-primary">Launch AI Agent</a>
+          <a href="#schemes" class="btn btn-secondary">View Schemes</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     IBM GRANITE AI HUB SECTION
+============================================================ -->
+<section id="ai-hub">
+
+  <div class="ai-hub-header">
+    <span class="ai-hub-badge">Live AI Processing</span>
+    <span class="ai-hub-title">IBM Granite AI Hub — Vendor Digitalization Engine</span>
+    <span class="ai-hub-subtitle" id="model-label">ibm/granite-13b-instruct-v2 via watsonx.ai</span>
+  </div>
+
+  <div class="ai-hub-body">
+
+    <div class="ai-hub-intro">
+      <div class="ai-hub-intro-label">Powered by IBM Granite + RAG</div>
+      <h2 class="ai-hub-intro-title">Tell us about your business.<br>Get a complete digital roadmap.</h2>
+      <p class="ai-hub-intro-desc">
+        Describe your street vending business in plain language. The agent retrieves live policy data,
+        evaluates scheme eligibility, and generates a personalised digital plan — in your preferred language.
+      </p>
+    </div>
+
+    <div id="config-warning" class="hidden" style="max-width:760px;margin:0 auto 24px;">
+    </div>
+
+    <div class="form-card" style="max-width:760px;margin:0 auto;">
+      <div class="form-card-header">
+        <span class="status-dot" id="api-status-dot"></span>
+        <span class="form-card-header-title">Vendor Profile Input</span>
+        <span class="form-card-header-sub" id="api-status-text">Connecting to IBM Granite...</span>
+      </div>
+      <div class="form-card-body">
+
+        <!-- Language selector -->
+        <div style="margin-bottom:20px;">
+          <label style="display:block;margin-bottom:10px;">Output Language</label>
+          <div class="lang-row" id="lang-buttons">
+            <button class="lang-btn active" data-lang="en" type="button">English</button>
+            <button class="lang-btn" data-lang="hi" type="button">Hindi — हिंदी</button>
+            <button class="lang-btn" data-lang="mr" type="button">Marathi — मराठी</button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="vendor-input">Vendor Description <span class="req">*</span></label>
+            <span class="form-hint">Describe your business in your own words. Example: "I sell fruit near Pune railway station."</span>
+            <textarea id="vendor-input" placeholder="I sell fresh fruits near the Camp bus stand in Pune. I have been doing this for 5 years and have a regular customer base." rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="location">Location <span class="req">*</span></label>
+            <span class="form-hint">Area, city or landmark</span>
+            <input type="text" id="location" placeholder="e.g. Camp area, Pune" />
+          </div>
+          <div class="form-group">
+            <label for="business-type">Business Type <span class="req">*</span></label>
+            <span class="form-hint">Select the closest category</span>
+            <select id="business-type">
+              <option value="">Select category...</option>
+              <option value="Fruit Vendor">Fruit Vendor</option>
+              <option value="Vegetable Vendor">Vegetable Vendor</option>
+              <option value="Food / Snacks Stall">Food / Snacks Stall</option>
+              <option value="Tea / Beverages Stall">Tea / Beverages Stall</option>
+              <option value="Flower Vendor">Flower Vendor</option>
+              <option value="Fish / Seafood Vendor">Fish / Seafood Vendor</option>
+              <option value="Clothing / Textile Vendor">Clothing / Textile Vendor</option>
+              <option value="Cobbler / Footwear Repair">Cobbler / Footwear Repair</option>
+              <option value="Tailor">Tailor</option>
+              <option value="Barber / Personal Care">Barber / Personal Care</option>
+              <option value="Toy / Novelty Vendor">Toy / Novelty Vendor</option>
+              <option value="Newspaper / Book Vendor">Newspaper / Book Vendor</option>
+              <option value="Artisan / Craftsperson">Artisan / Craftsperson</option>
+              <option value="Other Micro Retail">Other Micro Retail</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button class="btn btn-primary" id="generate-btn" type="button">Generate Digital Plan</button>
+        <button class="btn btn-secondary btn-sm" id="clear-btn" type="button">Clear</button>
+        <span class="form-footer-note" id="form-footer-note">IBM Granite AI — RAG-augmented generation</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     VENDOR PROFILE REGISTRATION SECTION
+============================================================ -->
+<section id="vendor-registration" class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="section-label">Vendor Profile Registration</div>
+    <h2 class="section-title">Save and Manage Your Business Profile</h2>
+    <p class="section-desc" style="margin-bottom:32px;">
+      Register your vendor profile locally for persistent sessions. Saved details auto-fill the AI Agent form so you do not need to re-enter them each visit.
+    </p>
+
+    <div>
+      <div class="form-card">
+        <div class="form-card-header">
+          <span class="form-card-header-title">Business Profile — Local Registration</span>
+          <span class="form-card-header-sub" id="reg-status-text">Not saved</span>
+        </div>
+        <div class="form-card-body">
+          <div class="form-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="form-group">
+              <label for="reg-store-name">Store / Business Name <span class="req">*</span></label>
+              <input type="text" id="reg-store-name" placeholder="e.g. Ramesh Fresh Fruits" />
+            </div>
+            <div class="form-group">
+              <label for="reg-category">Business Category <span class="req">*</span></label>
+              <select id="reg-category">
+                <option value="">Select category...</option>
+                <option>Fruit Vendor</option>
+                <option>Vegetable Vendor</option>
+                <option>Food / Snacks Stall</option>
+                <option>Tea / Beverages Stall</option>
+                <option>Flower Vendor</option>
+                <option>Fish / Seafood Vendor</option>
+                <option>Clothing / Textile Vendor</option>
+                <option>Cobbler / Footwear Repair</option>
+                <option>Tailor</option>
+                <option>Barber / Personal Care</option>
+                <option>Toy / Novelty Vendor</option>
+                <option>Newspaper / Book Vendor</option>
+                <option>Artisan / Craftsperson</option>
+                <option>Other Micro Retail</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reg-location">Location / Area <span class="req">*</span></label>
+              <input type="text" id="reg-location" placeholder="e.g. Camp area, Pune" />
+            </div>
+            <div class="form-group">
+              <label for="reg-contact">Contact Number</label>
+              <input type="text" id="reg-contact" placeholder="e.g. 9876543210" />
+            </div>
+            <div class="form-group" style="grid-column:2/-1;">
+              <label for="reg-description">Business Description</label>
+              <span class="form-hint">Brief description used to pre-fill the AI Agent.</span>
+              <textarea id="reg-description" rows="2" placeholder="e.g. I sell fresh seasonal fruits at the Camp bus stand. I have been in this business for 5 years."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="form-footer">
+          <button class="btn btn-primary" id="reg-save-btn" type="button">Save Profile</button>
+          <button class="btn btn-ghost btn-sm" id="reg-clear-btn" type="button">Clear Form</button>
+        </div>
+      </div>
+      <div id="reg-alert" class="hidden" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     OUTPUT SECTION
+============================================================ -->
+<section id="output-section" class="section-alt section" style="display:none;">
+  <div class="container">
+
+    <!-- Loading state -->
+    <div id="loading-wrap" class="loader-wrap hidden">
+      <div class="spinner"></div>
+      <div class="loader-title">IBM Granite is processing your request...</div>
+      <div class="loader-sub">Retrieving policy sources and generating your digital plan.</div>
+      <div class="progress-steps" id="progress-steps">
+        <div class="progress-step done" id="step-1">
+          <span class="step-icon done-icon">1</span>Authenticating with IBM watsonx.ai
+        </div>
+        <div class="progress-step active" id="step-2">
+          <span class="step-icon">2</span>Retrieving RAG policy sources
+        </div>
+        <div class="progress-step" id="step-3">
+          <span class="step-icon">3</span>Generating business profile via Granite
+        </div>
+        <div class="progress-step" id="step-4">
+          <span class="step-icon">4</span>Evaluating scheme eligibility
+        </div>
+        <div class="progress-step" id="step-5">
+          <span class="step-icon">5</span>Assembling digital plan
+        </div>
+      </div>
+    </div>
+
+    <!-- Error banner -->
+    <div id="error-wrap" class="hidden"></div>
+
+    <!-- Output grid (rendered after success) -->
+    <div id="output-wrap" class="hidden">
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+        <div>
+          <div class="section-label">AI-Generated Output</div>
+          <h2 class="section-title" style="margin-bottom:0;">Your Digital Business Plan</h2>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <span class="model-pill"><span class="model-pill-dot"></span><span id="output-model-label">IBM Granite</span></span>
+          <span id="output-timestamp" style="font-size:12px;color:var(--muted);"></span>
+        </div>
+      </div>
+
+      <div class="output-grid">
+
+        <!-- Main AI output -->
+        <div>
+          <div class="output-card fade-in">
+            <div class="output-card-header">
+              <span class="teal-dot"></span>
+              <span class="output-card-title">IBM Granite — Generated Business Plan</span>
+              <span class="output-card-meta" id="output-lang-label">English</span>
+            </div>
+            <div class="output-body" id="output-text"></div>
+          </div>
+
+          <!-- RAG Citation Panel -->
+          <div style="margin-top:20px;" id="citation-wrap">
+            <div class="citation-panel fade-in">
+              <div class="citation-header">
+                <span class="teal-dot"></span>
+                <span class="citation-label">RAG Source Citations</span>
+                <span class="citation-count" id="citation-count">0</span>
+              </div>
+              <div class="citation-list" id="citation-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+
+          <!-- Digital Business Card -->
+          <div class="biz-card fade-in" id="biz-card-wrap">
+            <div class="biz-card-accent"></div>
+            <div class="biz-card-body">
+              <div style="display:flex;align-items:flex-start;gap:14px;">
+                <div style="flex:1;">
+                  <div class="biz-card-name" id="card-name">Business Name</div>
+                  <div class="biz-card-category" id="card-category">Category</div>
+                  <div class="biz-card-tagline" id="card-tagline">Tagline</div>
+                </div>
+                <div class="qr-placeholder" title="QR Code Placeholder — configure UPI ID to generate">
+                  <div class="qr-grid" id="qr-grid"></div>
+                  <span class="qr-label">UPI QR</span>
+                </div>
+              </div>
+
+              <div class="biz-card-upi">
+                <span class="upi-label">UPI</span>
+                <span id="card-upi">vendor@upi</span>
+              </div>
+
+              <div class="biz-listing-links" id="card-links"></div>
+            </div>
+          </div>
+
+          <!-- Export Plan -->
+          <div class="export-card fade-in">
+            <div class="export-card-title">Export Digital Plan</div>
+            <div class="export-card-desc">Download a plain-text copy of your complete digital plan for offline access, printing, or sharing with a bank manager.</div>
+            <button class="btn btn-accent" id="export-btn" type="button" style="width:100%;">Export Plan as .txt</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SCHEMES & RAG SECTION
+============================================================ -->
+<section id="schemes" class="section">
+  <div class="container">
+    <div class="section-label">Government Schemes</div>
+    <h2 class="section-title">Multi-Scheme Credit Eligibility Engine</h2>
+    <p class="section-desc">
+      Real-time eligibility screening across four central government credit and support schemes
+      for street vendors and micro-entrepreneurs.
+    </p>
+
+    <!-- Scheme cards rendered here after generation -->
+    <div class="schemes-grid" id="schemes-grid">
+      <!-- Default placeholder cards -->
+      <div class="scheme-card">
+        <div class="scheme-card-top">
+          <div>
+            <div class="scheme-name">PM SVANidhi Micro-Loan</div>
+            <div class="scheme-amount">Rs 10,000 / 20,000 / 50,000</div>
+          </div>
+          <span class="scheme-badge badge-check">Run Agent First</span>
+        </div>
+        <div class="scheme-reason">Generate a vendor profile to check eligibility for this scheme.</div>
+        <div class="scheme-note">Exclusively for urban street vendors with a Certificate of Vending.</div>
+        <a class="scheme-portal-link" href="https://pmsvanidhi.mohua.gov.in" target="_blank" rel="noopener">Visit PM SVANidhi Portal</a>
+      </div>
+
+      <div class="scheme-card">
+        <div class="scheme-card-top">
+          <div>
+            <div class="scheme-name">Udyam Assist Platform</div>
+            <div class="scheme-amount">Free MSME Registration</div>
+          </div>
+          <span class="scheme-badge badge-check">Run Agent First</span>
+        </div>
+        <div class="scheme-reason">Generate a vendor profile to check eligibility for this scheme.</div>
+        <div class="scheme-note">No GST or ITR required. Opens access to formal bank credit.</div>
+        <a class="scheme-portal-link" href="https://udyamassist.gov.in" target="_blank" rel="noopener">Visit Udyam Assist Portal</a>
+      </div>
+
+      <div class="scheme-card">
+        <div class="scheme-card-top">
+          <div>
+            <div class="scheme-name">MUDRA Shishu Loan</div>
+            <div class="scheme-amount">Up to Rs 50,000</div>
+          </div>
+          <span class="scheme-badge badge-check">Run Agent First</span>
+        </div>
+        <div class="scheme-reason">Generate a vendor profile to check eligibility for this scheme.</div>
+        <div class="scheme-note">No collateral required. Apply via any public sector bank or MFI.</div>
+        <a class="scheme-portal-link" href="https://www.mudra.org.in" target="_blank" rel="noopener">Visit MUDRA Portal</a>
+      </div>
+
+      <div class="scheme-card">
+        <div class="scheme-card-top">
+          <div>
+            <div class="scheme-name">PM Vishwakarma Scheme</div>
+            <div class="scheme-amount">Rs 15,000 toolkit + Rs 1-2L credit</div>
+          </div>
+          <span class="scheme-badge badge-check">Run Agent First</span>
+        </div>
+        <div class="scheme-reason">Generate a vendor profile to check eligibility for this scheme.</div>
+        <div class="scheme-note">For 18 traditional artisan and craftsperson categories.</div>
+        <a class="scheme-portal-link" href="https://pmvishwakarma.gov.in" target="_blank" rel="noopener">Visit PM Vishwakarma Portal</a>
+      </div>
+    </div>
+
+    <!-- Scheme deep-dive query -->
+    <div class="scheme-query-wrap" style="margin-top:40px;">
+      <div class="scheme-query-header">
+        <div class="scheme-query-title">Deep-Dive Scheme Analysis via IBM Granite</div>
+        <div class="scheme-query-desc">Describe your vendor situation and get detailed scheme guidance with document requirements.</div>
+      </div>
+      <div class="scheme-query-body">
+        <div class="scheme-query-input-row">
+          <textarea id="scheme-query-input" placeholder="e.g. I am a fruit vendor in Pune with 5 years of experience. I have an Aadhaar card but no formal business registration. I need working capital of Rs 30,000." style="flex:1;" rows="3"></textarea>
+          <button class="btn btn-primary" id="scheme-query-btn" type="button" style="white-space:nowrap;">Analyse Schemes</button>
+        </div>
+        <div id="scheme-query-result" class="hidden"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <span class="footer-brand">Street Vendor Digitalization Agent</span>
+      <ul class="footer-links">
+        <li><a href="https://pmsvanidhi.mohua.gov.in" target="_blank" rel="noopener">PM SVANidhi</a></li>
+        <li><a href="https://msme.gov.in" target="_blank" rel="noopener">Ministry of MSME</a></li>
+        <li><a href="https://udyamassist.gov.in" target="_blank" rel="noopener">Udyam Assist</a></li>
+        <li><a href="https://www.ibm.com/watsonx" target="_blank" rel="noopener">IBM watsonx.ai</a></li>
+      </ul>
+      <span class="footer-copy">Powered by IBM Granite via watsonx.ai — IBM Hackathon 2024</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  // ----------------------------------------------------------------
+  // State
+  // ----------------------------------------------------------------
+  let selectedLang = 'en';
+  let lastExportText = '';
+  let lastResult = null;
+  const LANG_LABELS = { en: 'English', hi: 'Hindi — हिंदी', mr: 'Marathi — मराठी' };
+
+  // ----------------------------------------------------------------
+  // API health check on load
+  // ----------------------------------------------------------------
+  async function checkHealth() {
+    try {
+      const res = await fetch('/api/health');
+      const data = await res.json();
+      const dot = document.getElementById('api-status-dot');
+      const text = document.getElementById('api-status-text');
+
+      if (data.status === 'ok') {
+        dot.style.background = '#22c55e';
+        text.textContent = 'IBM Granite API — Connected';
+        document.getElementById('model-label').textContent = data.model + ' via watsonx.ai';
+        document.getElementById('output-model-label').textContent = data.model;
+      } else {
+        dot.style.background = '#f59e0b';
+        text.textContent = 'Degraded — missing config keys: ' + data.missing_config.join(', ');
+
+        const warn = document.getElementById('config-warning');
+        warn.className = '';
+        warn.innerHTML = '<div class="alert alert-warn"><span class="alert-icon">!</span><span>IBM API credentials are not configured. Set <strong>IBM_API_KEY</strong> and <strong>IBM_PROJECT_ID</strong> in your <code>.env</code> file and restart the server. You can still use the UI — responses will show an API error until credentials are provided.</span></div>';
+      }
+    } catch (e) {
+      const dot = document.getElementById('api-status-dot');
+      const text = document.getElementById('api-status-text');
+      dot.style.background = '#ef4444';
+      text.textContent = 'Server not reachable — start Flask with: python app.py';
+
+      const warn = document.getElementById('config-warning');
+      warn.className = '';
+      warn.innerHTML = '<div class="alert alert-error"><span class="alert-icon">!</span><span>Cannot connect to the Flask backend. Make sure the server is running: <code>python app.py</code></span></div>';
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Language toggle
+  // ----------------------------------------------------------------
+  document.querySelectorAll('.lang-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.lang-btn').forEach(function (b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      selectedLang = this.dataset.lang;
+    });
+  });
+
+  // ----------------------------------------------------------------
+  // Progress steps animation
+  // ----------------------------------------------------------------
+  const STEPS = ['step-1', 'step-2', 'step-3', 'step-4', 'step-5'];
+
+  function animateSteps() {
+    let i = 0;
+    STEPS.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.className = 'progress-step';
+        el.querySelector('.step-icon').className = 'step-icon';
+        el.querySelector('.step-icon').textContent = String(STEPS.indexOf(id) + 1);
+      }
+    });
+
+    function advance() {
+      if (i >= STEPS.length) return;
+
+      if (i > 0) {
+        const prev = document.getElementById(STEPS[i - 1]);
+        if (prev) {
+          prev.className = 'progress-step done';
+          prev.querySelector('.step-icon').className = 'step-icon done-icon';
+        }
+      }
+
+      const cur = document.getElementById(STEPS[i]);
+      if (cur) cur.className = 'progress-step active';
+
+      i++;
+      if (i < STEPS.length) {
+        setTimeout(advance, 1400);
+      }
+    }
+
+    advance();
+  }
+
+  // ----------------------------------------------------------------
+  // Lightweight markdown renderer
+  // ----------------------------------------------------------------
+  function renderMarkdown(text) {
+    if (!text) return '';
+    let html = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Headings
+    html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+    // Bold
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+    // Unordered lists
+    html = html.replace(/^\* (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>\n?)+/g, function (m) {
+      return '<ul>' + m + '</ul>';
+    });
+
+    // Numbered lists
+    html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+
+    // Paragraphs (lines not already in a tag)
+    html = html.replace(/^(?!<[hul]|<li)(.+)$/gm, '<p>$1</p>');
+
+    return html;
+  }
+
+  // ----------------------------------------------------------------
+  // Render scheme cards
+  // ----------------------------------------------------------------
+  function renderSchemeCards(schemes) {
+    const grid = document.getElementById('schemes-grid');
+    if (!grid || !schemes || !schemes.length) return;
+    grid.innerHTML = '';
+
+    schemes.forEach(function (s) {
+      const card = document.createElement('div');
+      card.className = 'scheme-card ' + (s.eligible ? 'eligible' : 'not-eligible') + ' fade-in';
+
+      const badge = s.eligible
+        ? '<span class="scheme-badge badge-eligible">Eligible</span>'
+        : '<span class="scheme-badge badge-check">Not Applicable</span>';
+
+      const docList = s.documents.map(function (d) {
+        return '<li>' + d + '</li>';
+      }).join('');
+
+      card.innerHTML =
+        '<div class="scheme-card-top">' +
+          '<div style="flex:1;">' +
+            '<div class="scheme-name">' + s.scheme_name + '</div>' +
+            '<div class="scheme-amount">' + s.amounts + '</div>' +
+          '</div>' +
+          badge +
+        '</div>' +
+        '<div class="scheme-reason">' + s.reason + '</div>' +
+        '<div class="scheme-docs-label">Documents Required</div>' +
+        '<ul class="scheme-docs-list">' + docList + '</ul>' +
+        '<div class="scheme-note">' + s.notes + '</div>' +
+        '<a class="scheme-portal-link" href="' + s.portal + '" target="_blank" rel="noopener">Visit Official Portal</a>';
+
+      grid.appendChild(card);
+    });
+  }
+
+  // ----------------------------------------------------------------
+  // Render RAG citation panel
+  // ----------------------------------------------------------------
+  function renderCitations(sources) {
+    const list = document.getElementById('citation-list');
+    const count = document.getElementById('citation-count');
+    if (!list) return;
+
+    count.textContent = String(sources.length);
+    list.innerHTML = '';
+
+    sources.forEach(function (src, idx) {
+      const item = document.createElement('div');
+      item.className = 'citation-item';
+      item.innerHTML =
+        '<span class="citation-num">' + (idx + 1) + '</span>' +
+        '<div class="citation-info">' +
+          '<div class="citation-name">' + src.name + '</div>' +
+          '<div class="citation-desc">' + src.description + '</div>' +
+          '<a class="citation-url" href="' + src.url + '" target="_blank" rel="noopener">' + src.url + '</a>' +
+        '</div>';
+      list.appendChild(item);
+    });
+  }
+
+  // ----------------------------------------------------------------
+  // Render digital business card
+  // ----------------------------------------------------------------
+  function renderBusinessCard(card) {
+    document.getElementById('card-name').textContent = card.business_name || 'Your Business';
+    document.getElementById('card-category').textContent = card.category || 'Micro Retail';
+    document.getElementById('card-tagline').textContent = card.tagline || '';
+    document.getElementById('card-upi').textContent = card.upi_placeholder || 'vendor@upi';
+
+    // QR placeholder grid pattern
+    const qrGrid = document.getElementById('qr-grid');
+    const pattern = [1,1,0,1, 1,0,1,1, 0,1,1,0, 1,1,0,1, 0,0,1,1, 1,0,0,1, 0,1,0,1, 1,1,1,0];
+    qrGrid.innerHTML = '';
+    pattern.forEach(function (v) {
+      const cell = document.createElement('div');
+      cell.className = 'qr-cell' + (v ? '' : ' empty');
+      qrGrid.appendChild(cell);
+    });
+
+    const linksEl = document.getElementById('card-links');
+    linksEl.innerHTML = '';
+    if (card.listing_links) {
+      card.listing_links.forEach(function (link) {
+        const a = document.createElement('a');
+        a.className = 'listing-link';
+        a.href = link.url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.innerHTML = link.platform + '<span class="listing-link-arrow">&#8599;</span>';
+        linksEl.appendChild(a);
+      });
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Export plan
+  // ----------------------------------------------------------------
+  document.getElementById('export-btn').addEventListener('click', function () {
+    if (!lastExportText) return;
+    const blob = new Blob([lastExportText], { type: 'text/plain; charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'vendor-digital-plan.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 1000);
+  });
+
+  // ----------------------------------------------------------------
+  // Generate profile — main action
+  // ----------------------------------------------------------------
+  document.getElementById('generate-btn').addEventListener('click', async function () {
+    const vendorInput = document.getElementById('vendor-input').value.trim();
+    const location = document.getElementById('location').value.trim();
+    const businessType = document.getElementById('business-type').value.trim();
+
+    if (!vendorInput || !location || !businessType) {
+      const errWrap = document.getElementById('error-wrap');
+      errWrap.className = '';
+      errWrap.innerHTML = '<div class="alert alert-error"><span class="alert-icon">!</span><span>Please fill in all required fields: Vendor Description, Location, and Business Type.</span></div>';
+      document.getElementById('output-section').style.display = '';
+      errWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Show output section
+    const outputSection = document.getElementById('output-section');
+    outputSection.style.display = '';
+    outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Show loader
+    document.getElementById('loading-wrap').className = 'loader-wrap';
+    document.getElementById('error-wrap').className = 'hidden';
+    document.getElementById('output-wrap').className = 'hidden';
+    animateSteps();
+
+    document.getElementById('generate-btn').disabled = true;
+    document.getElementById('generate-btn').textContent = 'Processing...';
+
+    try {
+      const response = await fetch('/api/generate-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vendor_input: vendorInput,
+          location: location,
+          business_type: businessType,
+          language: selectedLang,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'API request failed with status ' + response.status);
+      }
+
+      lastResult = data;
+      lastExportText = data.export_text || '';
+
+      // Populate output
+      document.getElementById('output-text').innerHTML = renderMarkdown(data.generated_text || '');
+      document.getElementById('output-lang-label').textContent = LANG_LABELS[selectedLang] || selectedLang;
+
+      if (data.timestamp) {
+        const ts = new Date(data.timestamp);
+        document.getElementById('output-timestamp').textContent =
+          ts.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
+          ts.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      renderCitations(data.sources || []);
+      renderBusinessCard(data.business_card || {});
+      renderSchemeCards(data.scheme_summary || []);
+
+      document.getElementById('loading-wrap').className = 'loader-wrap hidden';
+      document.getElementById('output-wrap').className = '';
+
+    } catch (err) {
+      document.getElementById('loading-wrap').className = 'loader-wrap hidden';
+      const errWrap = document.getElementById('error-wrap');
+      errWrap.className = '';
+      errWrap.innerHTML =
+        '<div class="alert alert-error">' +
+          '<span class="alert-icon">!</span>' +
+          '<div><strong>Generation failed.</strong><br>' + (err.message || String(err)) + '<br><br>' +
+          '<span style="font-size:12px;">Make sure the Flask server is running and IBM API credentials are set in <code>.env</code>.</span></div>' +
+        '</div>';
+    } finally {
+      document.getElementById('generate-btn').disabled = false;
+      document.getElementById('generate-btn').textContent = 'Generate Digital Plan';
+    }
+  });
+
+  // ----------------------------------------------------------------
+  // Clear form
+  // ----------------------------------------------------------------
+  document.getElementById('clear-btn').addEventListener('click', function () {
+    document.getElementById('vendor-input').value = '';
+    document.getElementById('location').value = '';
+    document.getElementById('business-type').value = '';
+    document.getElementById('output-section').style.display = 'none';
+  });
+
+  // ----------------------------------------------------------------
+  // Scheme deep-dive query
+  // ----------------------------------------------------------------
+  document.getElementById('scheme-query-btn').addEventListener('click', async function () {
+    const details = document.getElementById('scheme-query-input').value.trim();
+    if (!details) return;
+
+    const resultEl = document.getElementById('scheme-query-result');
+    resultEl.className = 'scheme-query-result';
+    resultEl.textContent = 'Querying IBM Granite for scheme analysis...';
+
+    this.disabled = true;
+    const origText = this.textContent;
+    this.textContent = 'Analysing...';
+
+    try {
+      const res = await fetch('/api/scheme-eligibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vendor_details: details, language: selectedLang }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Request failed');
+
+      resultEl.innerHTML = renderMarkdown(data.generated_text || '');
+    } catch (err) {
+      resultEl.innerHTML = '<div class="alert alert-error"><span class="alert-icon">!</span>' + (err.message || String(err)) + '</div>';
+    } finally {
+      this.disabled = false;
+      this.textContent = origText;
+    }
+  });
+
+  // ----------------------------------------------------------------
+  // Active nav link on scroll
+  // ----------------------------------------------------------------
+  const sections = ['overview', 'ai-hub', 'vendor-registration', 'schemes'];
+  const navLinks = document.querySelectorAll('.nav-links a[data-section]');
+
+  function updateNav() {
+    let current = 'overview';
+    sections.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= 80) current = id;
+      }
+    });
+    navLinks.forEach(function (a) {
+      a.classList.toggle('active', a.dataset.section === current);
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+
+  // ----------------------------------------------------------------
+  // Vendor Profile Registration (localStorage)
+  // ----------------------------------------------------------------
+  var REG_KEY = 'svda_vendor_profile';
+
+  function regAlert(msg, type) {
+    var el = document.getElementById('reg-alert');
+    el.className = 'alert alert-' + type;
+    el.textContent = msg;
+    setTimeout(function () { el.className = 'hidden'; }, 3500);
+  }
+
+  function getRegFields() {
+    return {
+      store_name: document.getElementById('reg-store-name').value.trim(),
+      category:   document.getElementById('reg-category').value.trim(),
+      location:   document.getElementById('reg-location').value.trim(),
+      contact:    document.getElementById('reg-contact').value.trim(),
+      description: document.getElementById('reg-description').value.trim(),
+    };
+  }
+
+  function fillRegFields(data) {
+    document.getElementById('reg-store-name').value  = data.store_name  || '';
+    document.getElementById('reg-category').value    = data.category    || '';
+    document.getElementById('reg-location').value    = data.location    || '';
+    document.getElementById('reg-contact').value     = data.contact     || '';
+    document.getElementById('reg-description').value = data.description || '';
+  }
+
+  document.getElementById('reg-save-btn').addEventListener('click', function () {
+    var fields = getRegFields();
+    if (!fields.store_name || !fields.category || !fields.location) {
+      regAlert('Store Name, Category, and Location are required to save.', 'error');
+      return;
+    }
+    localStorage.setItem(REG_KEY, JSON.stringify(fields));
+    document.getElementById('reg-status-text').textContent = 'Saved — ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    regAlert('Profile saved successfully.', 'info');
+  });
+
+  document.getElementById('reg-clear-btn').addEventListener('click', function () {
+    fillRegFields({ store_name: '', category: '', location: '', contact: '', description: '' });
+    document.getElementById('reg-status-text').textContent = 'Not saved';
+  });
+
+  // Auto-load on page open if a saved profile exists
+  (function () {
+    var raw = localStorage.getItem(REG_KEY);
+    if (raw) {
+      try {
+        fillRegFields(JSON.parse(raw));
+        document.getElementById('reg-status-text').textContent = 'Auto-loaded from saved profile';
+      } catch (e) {}
+    }
+  })();
+
+  // ----------------------------------------------------------------
+  // Init
+  // ----------------------------------------------------------------
+  checkHealth();
+  updateNav();
+
+})();
+</script>
+
+</body>
+</html>
