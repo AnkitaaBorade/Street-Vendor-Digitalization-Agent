@@ -22,7 +22,7 @@ class Config:
 
     # Granite model identifiers
     GRANITE_MODEL_ID: str = os.getenv(
-        "GRANITE_MODEL_ID", "ibm/granite-13b-instruct-v2"
+        "GRANITE_MODEL_ID", "ibm/granite-3-8b-instruct"
     )
     GRANITE_MAX_TOKENS: int = int(os.getenv("GRANITE_MAX_TOKENS", "1024"))
     GRANITE_TEMPERATURE: float = float(os.getenv("GRANITE_TEMPERATURE", "0.7"))
